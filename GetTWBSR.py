@@ -144,7 +144,7 @@ class DownloadTSEBot(ThreadingDownloadBot):
             return None
         BSRawData = GetBSRawData(Code, MaxPageNum)
         if None == BSRawData:
-            return Nonea
+            return None
         filename = "%s_%s.csv"%(Code,self.date) 
         CSVData = BSRawToCSV(BSRawData)
         CSVToFile(CSVData, filename)
