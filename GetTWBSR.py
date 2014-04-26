@@ -25,26 +25,27 @@ class ThreadingDownloadBot(threading.Thread):
         self.queue = queue
         self.pid = pid  
     def run(self):                
-	Code = self.queue.get()
-	retry = 0
-	if len(Code) >= 5:
-	    retry = int(Code[4])
-	    Code = Code[0:4]
-	while retry < 3 :
-	    print '[%d]Process:[%s] Left:%d retry:%d'%(self.pid,Code,self.queue.qsize(),retry)
-	    ret = self.RunImp(Code)
-	    if None == ret:
-		retry +=1	
-		retryCode = Code+str(retry)
-		print '********fail******* %d' %(self.pid)
-		sleep( 1 ) #[]== sleep 1 sec.
-	    else:
-		print '\t(%d)Write %s Finish...'%(self.pid,Code)	
-		break	
-	print "task_done! step 1 %d" % (self.queue.qsize())
-	self.queue.task_done()
-	print "task_done! step 2 %d" % (self.queue.qsize())
-	return
+	while(True):
+	    Code = self.queue.get()
+	    retry = 0
+	    if len(Code) >= 5:
+		retry = int(Code[4])
+		Code = Code[0:4]
+	    while retry < 3 :
+		print '[%d]Process:[%s] Left:%d retry:%d'%(self.pid,Code,self.queue.qsize(),retry)
+		ret = self.RunImp(Code)
+		if None == ret:
+		    retry +=1	
+		    retryCode = Code+str(retry)
+		    print '********fail******* %d' %(self.pid)
+		    sleep( 1 ) #[]== sleep 1 sec.
+		else:
+		    print '\t(%d)Write %s Finish...'%(self.pid,Code)	
+		    break	
+	    print "task_done! step 1 %d" % (self.queue.qsize())
+	    self.queue.task_done()
+	    print "task_done! step 2 %d" % (self.queue.qsize())
+	    return
         
 class DownloadTSEBot(ThreadingDownloadBot):
     def __init__(self,pid,queue):
@@ -171,32 +172,32 @@ class DownloadOTCBot(ThreadingDownloadBot):
                                 }
             
                 postData = urllib.urlencode( PostDataDict)
-                req = urllib2.Request( base_url , postData)
+                req = urllib2.request( base_url , postdata)
                 response = urllib2.urlopen( req)
                 html = response.read()
-            except Exception , e:
-                return None
-            with open('BSR/'+filename, 'wb') as csvfile:
+            except exception , e:
+                return none
+            with open('bsr/'+filename, 'wb') as csvfile:
                 content = '\n'.join(row for row in html.split(',,')[1:])
                 csvfile.write(content)
-            return True
+            return true
         
-        def getOTCDate(Code):
-            baseUrl = "http://www.gretai.org.tw/ch/stock/aftertrading/broker_trading/brokerBS.php"
-            postDataDict = {
-                'stk_code' : Code
+        def getotcdate(code):
+            baseurl = "http://www.gretai.org.tw/ch/stock/aftertrading/broker_trading/brokerbs.php"
+            postdatadict = {
+                'stk_code' : code
             }
-            postData = urllib.urlencode( postDataDict)
-            req = urllib2.Request( baseUrl , postData)
+            postdata = urllib.urlencode( postdatadict)
+            req = urllib2.request( baseurl , postdata)
             response = urllib2.urlopen(req)
             html = response.read()    
             date_list = re.findall(u'<input type="hidden" name="stk_date" value=(.*)>',html)
             for date in date_list:
                 return date
-            return None
+            return none
         	
-        self.RawBSR = "OTC"
-        otcDate = getOTCDate(Code)	
+        self.rawbsr = "otc"
+        otcdate = getotcdate(code)	
         if otcDate == None:
             return None
         filename = "%s_%d%s.csv"%(Code,int(otcDate[0:3])+1911,otcDate[3:]) 
@@ -247,7 +248,6 @@ if __name__ == '__main__':
 
     for Code in CodeDict['TSE']:
         TSEqueue.put(Code)
-
 
     #OTCqueue.join()
     TSEqueue.join()
