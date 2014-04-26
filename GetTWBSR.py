@@ -85,7 +85,10 @@ class DownloadTSEBot(ThreadingDownloadBot):
                 sp_ListCount = re.findall(u'<span id="sp_ListCount">(.*)</span>',html)[0]
                 return (HiddenField_spDate,sp_ListCount)
             except Exception,e:
-                print dir(e)
+		print e
+                #print dir(e)
+		if e.errno = 104:
+                   TSEqueue.put(Code)
                 return (None,None)
         
         # step 2. GetRawData
