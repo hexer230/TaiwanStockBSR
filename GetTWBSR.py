@@ -36,6 +36,7 @@ class ThreadingDownloadBot(threading.Thread):
 		Code = Code[0:4]
 	    while retry < 3 :
 		print '[%d]Process:[%s] Left:%d retry:%d'%(self.pid,Code,self.queue.qsize(),retry)
+		sleep( 1 ) #[]== don't hurry up
 		ret = self.RunImp(Code)
 		if None == ret:
 		    retry +=1	
@@ -236,7 +237,7 @@ if __name__ == '__main__':
     for Code in CodeDict['TSE']:
         TSEqueue.put(Code)
 
-    for i in range(100):
+    for i in range(10):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
         t.start()        
