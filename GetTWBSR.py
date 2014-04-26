@@ -51,12 +51,15 @@ class ThreadingDownloadBot(threading.Thread):
 			print "Got a three strike problem, sleep 5 secs then put back"
 			#sleep( 5 ) #[]== you should sleep here.
 			#self.queue.put(Code)
+			ifound = False
 			for e in strikeOutAry:
 			    if e == Code :
 				print "found strikeOutAlready, give up currently"				
-			    break
-			self.queue.put(Code)
-			strikeOutAry.append(Code)		
+				iFound = True
+			        break
+			if iFound == False :
+			    self.queue.put(Code)
+			    strikeOutAry.append(Code)		
 			break
 		    retryCode = Code+str(retry)
 		    print '********fail******* %d' %(self.pid)
