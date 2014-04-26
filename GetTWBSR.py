@@ -31,7 +31,7 @@ class ThreadingDownloadBot(threading.Thread):
 	    retry = int(Code[4])
 	    Code = Code[0:4]
 	print '[%d]Process:[%s] Left:%d retry:%d'%(self.pid,Code,self.queue.qsize(),retry)
-	while ret < 3 :
+	while retry < 3 :
 	    ret = self.RunImp(Code)
 	    if None == ret:
 		retry +=1	
