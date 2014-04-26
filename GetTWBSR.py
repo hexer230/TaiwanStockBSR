@@ -19,7 +19,10 @@ from types import *
 # BSR : Buy Sell Report , 分公司買賣進出表
 
 global ERR_RESET_PEER
+global RESETPEER_CNT, TIMEOUT_CNT
 
+RESETPEER_CNT = 0
+TIMEOUT_CNT = 0
 ERR_RESET_PEER = 104
 
 class ThreadingDownloadBot(threading.Thread):
@@ -46,11 +49,21 @@ class ThreadingDownloadBot(threading.Thread):
 		    retryCode = Code+str(retry)
 		    print '********fail******* %d' %(self.pid)
 		    sleep( 1 ) #[]== sleep 1 sec.
-		elif ret == "104" :
+		elif ret == "104":
+                    global RESETPEER_CNT
+                    RESETPEER_CNT += 1
 		    print "Got a reset error, sleep 5 secs then put back"
 		    sleep( 5 ) #[]== you should sleep here.
 		    self.queue.put(Code)
 		    break
+		elif ret == "110":
+		    print "Got a time out error, sleep 5 secs then put back"
+		    sleep( 5 ) #[]== you should sleep here.
+                    global TIMEOUT_CNT
+                    TIMEOUT_CNT += 1
+		    self.queue.put(Code)
+		    break
+
 		else:
 		    print '\t(%d)Write %s Finish...'%(self.pid,Code)	
 		    break		  
@@ -97,6 +110,8 @@ class DownloadTSEBot(ThreadingDownloadBot):
                 #print dir(e)
 		if e.errno == 104 : #reset by peer
 		   return ("ERR","104")
+	        elif e.errno == 110 : #connection timeout
+		   return ("ERR","110")
 	        else :
                    return (None,None)
         
@@ -279,4 +294,6 @@ if __name__ == '__main__':
     tEndTSE = time()
 
     print 'End...Total(%f)'%(tEndTSE-tStart)
+    print "Reset peer count (%d)" %(RESSETPEER_CNT)
+    print "Time out count (%d)" %(TIMEOUT_CNT)
 
