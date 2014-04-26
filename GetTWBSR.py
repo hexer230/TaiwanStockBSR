@@ -19,11 +19,10 @@ from types import *
 # BSR : Buy Sell Report , 分公司買賣進出表
 
 global ERR_RESET_PEER
-global RESETPEER_CNT, TIMEOUT_CNT, THREE_STRIKE_CNT
+global RESETPEER_CNT, TIMEOUT_CNT
 global strikeOutAry
 RESETPEER_CNT = 0
 TIMEOUT_CNT = 0
-THREE_STRIKE_CNT = 0
 ERR_RESET_PEER = 104
 strikeOutAry = []
 
@@ -47,14 +46,17 @@ class ThreadingDownloadBot(threading.Thread):
 		sleep( 1 ) #[]== don't hurry up
 		ret = self.RunImp(Code)		
 		if ret == None: #lol, what the hell?
-		    global THREE_STRIKE_CNT
-		    THREE_STRIKE_CNT += 1		    
 		    retry +=1	
 		    if retry == 3 :
 			print "Got a three strike problem, sleep 5 secs then put back"
 			#sleep( 5 ) #[]== you should sleep here.
 			#self.queue.put(Code)
-			strikeOutAry.append(Code)
+			for e in strikeOutAry:
+			    if e == Code :
+				print "found strikeOutAlready, give up currently"				
+			    break
+			self.queue.put(Code)
+			strikeOutAry.append(Code)		
 			break
 		    retryCode = Code+str(retry)
 		    print '********fail******* %d' %(self.pid)
@@ -305,20 +307,5 @@ if __name__ == '__main__':
 
     print 'End...Total(%f)'%(tEndTSE-tStart)
     print "Reset peer count (%d)" %(RESETPEER_CNT)
-    print "Time out count (%d)" %(TIMEOUT_CNT)
-    print "THREE STRIKE count (%d)" %(THREE_STRIKE_CNT)
-    print "Strike Out list is:"
-    for entry in strikeOutAry:
-	print entry
+    print "Time out count (%d)" %(TIMEOUT_CNT)    
 
-
-#==========================================================
-    print "The second change"
-    for Code in strikeOutAry:
-        TSEqueue.put(Code)
-
-    for i in range(10):
-        t = DownloadTSEBot(i,TSEqueue)
-        t.setDaemon(True)
-        t.start()
-	sleep(0.3)
