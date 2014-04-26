@@ -44,8 +44,7 @@ class ThreadingDownloadBot(threading.Thread):
 		    break	
 	    print "task_done! step 1 %d" % (self.queue.qsize())
 	    self.queue.task_done()
-	    print "task_done! step 2 %d" % (self.queue.qsize())
-	    return
+	    print "task_done! step 2 %d" % (self.queue.qsize())	   
         
 class DownloadTSEBot(ThreadingDownloadBot):
     def __init__(self,pid,queue):
