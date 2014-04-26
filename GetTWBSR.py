@@ -232,6 +232,10 @@ if __name__ == '__main__':
     #    t.setDaemon(True)
     #    t.start()
     TSEqueue = Queue.Queue()
+
+    for Code in CodeDict['TSE']:
+        TSEqueue.put(Code)
+
     for i in range(100):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
@@ -240,8 +244,8 @@ if __name__ == '__main__':
     #for Code in CodeDict['OTC']:
     #    OTCqueue.put(Code)         
 
-    for Code in CodeDict['TSE']:
-        TSEqueue.put(Code)
+    #for Code in CodeDict['TSE']:
+     #   TSEqueue.put(Code)
 
     #OTCqueue.join()
     TSEqueue.join()
