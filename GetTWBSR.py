@@ -85,7 +85,7 @@ class DownloadTSEBot(ThreadingDownloadBot):
                 sp_ListCount = re.findall(u'<span id="sp_ListCount">(.*)</span>',html)[0]
                 return (HiddenField_spDate,sp_ListCount)
             except Exception,e:
-                print e		
+                print e.text
                 return (None,None)
         
         # step 2. GetRawData
@@ -250,7 +250,8 @@ if __name__ == '__main__':
     for i in range(100):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
-        t.start()        
+        t.start()
+	sleep(0.3)
 
     #for Code in CodeDict['OTC']:
     #    OTCqueue.put(Code)         
