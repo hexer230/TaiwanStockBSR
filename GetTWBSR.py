@@ -38,7 +38,7 @@ class ThreadingDownloadBot(threading.Thread):
 		print '[%d]Process:[%s] Left:%d retry:%d'%(self.pid,Code,self.queue.qsize(),retry)
 		sleep( 1 ) #[]== don't hurry up
 		ret = self.RunImp(Code)
-		if None == ret:
+		if ret == None: #lol, what the hell?
 		    retry +=1	
 		    retryCode = Code+str(retry)
 		    print '********fail******* %d' %(self.pid)
@@ -57,6 +57,7 @@ class DownloadTSEBot(ThreadingDownloadBot):
     def RunImp(self,Code):
 
         # step 1. GetMaxPage and POST data
+	# []== I got to change this approach
         def GetDateAndspPage(Code):
             try:
                 base_url = 'http://bsr.twse.com.tw/bshtm/bsMenu.aspx'
@@ -84,7 +85,7 @@ class DownloadTSEBot(ThreadingDownloadBot):
                 sp_ListCount = re.findall(u'<span id="sp_ListCount">(.*)</span>',html)[0]
                 return (HiddenField_spDate,sp_ListCount)
             except Exception,e:
-                #print e
+                print e		
                 return (None,None)
         
         # step 2. GetRawData
@@ -246,7 +247,7 @@ if __name__ == '__main__':
     for Code in CodeDict['TSE']:
         TSEqueue.put(Code)
 
-    for i in range(50):
+    for i in range(100):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
         t.start()        
