@@ -135,10 +135,11 @@ class DownloadTSEBot(ThreadingDownloadBot):
         
         def CSVToFile(CSVData,filename):	    
 	    retryCnt = 0
+            csvfile = None
 	    while csvfile == None :
 	       csvfile = open('BSR/'+filename, 'wb')
-	       retry+=1
-	       if retry == 3:
+	       retryCnt+=1
+	       if retryCnt == 3:
 		  print "I can't open file.%s" %(csvfile)
 	          break
 	    if csvfile != None :
