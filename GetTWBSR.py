@@ -26,6 +26,9 @@ class ThreadingDownloadBot(threading.Thread):
         self.pid = pid  
     def run(self):                
 	while(True):
+	    if self.queue.qsize()==0 :
+		print "all job is done"
+		break
 	    Code = self.queue.get()
 	    retry = 0
 	    if len(Code) >= 5:
@@ -133,25 +136,17 @@ class DownloadTSEBot(ThreadingDownloadBot):
             with open('BSR/'+filename, 'wb') as csvfile:
                 content = '\n'.join(row for row in CSVData)
                 csvfile.write(content)
-        print "CHK A"
         self.RawBSR = "TSE"
         self.date,MaxPageNum = GetDateAndspPage(Code)
-        print "CHK B"
         print Code , self.date , MaxPageNum
         if None == MaxPageNum or "" == MaxPageNum:
             return None
-        print "CHK C"
         BSRawData = GetBSRawData(Code, MaxPageNum)
-        print "CHK D"
         if None == BSRawData:
             return Nonea
-        print "CHK E"
         filename = "%s_%s.csv"%(Code,self.date) 
-        print "CHK F"
         CSVData = BSRawToCSV(BSRawData)
-        print "CHK G"
         CSVToFile(CSVData, filename)
-        print "CHK H"
         return True
       
 class DownloadOTCBot(ThreadingDownloadBot):
@@ -237,7 +232,7 @@ if __name__ == '__main__':
     #    t.setDaemon(True)
     #    t.start()
     TSEqueue = Queue.Queue()
-    for i in range(1):
+    for i in range(20):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
         t.start()        
