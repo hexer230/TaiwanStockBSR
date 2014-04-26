@@ -87,7 +87,7 @@ class DownloadTSEBot(ThreadingDownloadBot):
             except Exception,e:
 		print e
                 #print dir(e)
-		if e.errno = 104:
+		if e.errno == 104:
                    TSEqueue.put(Code)
                 return (None,None)
         
