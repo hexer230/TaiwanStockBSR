@@ -46,7 +46,7 @@ class ThreadingDownloadBot(threading.Thread):
 		    retryCode = Code+str(retry)
 		    print '********fail******* %d' %(self.pid)
 		    sleep( 1 ) #[]== sleep 1 sec.
-		elif ret == 104 :
+		elif ret == "104" :
 		    print "Got a reset error, sleep 5 secs then put back"
 		    sleep( 5 ) #[]== you should sleep here.
 		    self.queue.put(Code)
