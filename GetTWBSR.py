@@ -232,7 +232,7 @@ if __name__ == '__main__':
     #    t.setDaemon(True)
     #    t.start()
     TSEqueue = Queue.Queue()
-    for i in range(20):
+    for i in range(100):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
         t.start()        
