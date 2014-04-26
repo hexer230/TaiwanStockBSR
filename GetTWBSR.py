@@ -32,6 +32,7 @@ class ThreadingDownloadBot(threading.Thread):
 	    Code = Code[0:4]
 	print '[%d]Process:[%s] Left:%d retry:%d'%(self.pid,Code,self.queue.qsize(),retry)
 	while retry < 3 :
+	    print "chk AAA"
 	    ret = self.RunImp(Code)
 	    if None == ret:
 		retry +=1	
@@ -229,7 +230,7 @@ if __name__ == '__main__':
     #    t.start()
     
     TSEqueue = Queue.Queue()
-    for i in range(3):
+    for i in range(1):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
         t.start()        
