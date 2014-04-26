@@ -46,9 +46,9 @@ class ThreadingDownloadBot(threading.Thread):
 		else:
 		    print '\t(%d)Write %s Finish...'%(self.pid,Code)	
 		    break	
-	    print "task_done! step 1 %d" % (self.queue.qsize())
+	    #print "task_done! step 1 %d" % (self.queue.qsize())
 	    self.queue.task_done()
-	    print "task_done! step 2 %d" % (self.queue.qsize())	   
+	    #print "task_done! step 2 %d" % (self.queue.qsize())	   
         
 class DownloadTSEBot(ThreadingDownloadBot):
     def __init__(self,pid,queue):
@@ -133,10 +133,18 @@ class DownloadTSEBot(ThreadingDownloadBot):
             sortedlist.insert(0,title)
             return sortedlist
         
-        def CSVToFile(CSVData,filename):
-            with open('BSR/'+filename, 'wb') as csvfile:
-                content = '\n'.join(row for row in CSVData)
-                csvfile.write(content)
+        def CSVToFile(CSVData,filename):	    
+	    retryCnt = 0
+	    while csvfile == None :
+	       csvfile = open('BSR/'+filename, 'wb')
+	       retry+=1
+	       if retry == 3:
+		  print "I can't open file.%s" %(csvfile)
+	          break
+	    if csvfile != None :
+		content = '\n'.join(row for row in CSVData)		    
+		csvfile.write(content)
+
         self.RawBSR = "TSE"
         self.date,MaxPageNum = GetDateAndspPage(Code)
         print Code , self.date , MaxPageNum
