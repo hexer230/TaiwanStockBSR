@@ -44,6 +44,7 @@ class ThreadingDownloadBot(threading.Thread):
 	print "task_done! step 1 %d" % (self.queue.qsize())
 	self.queue.task_done()
 	print "task_done! step 2 %d" % (self.queue.qsize())
+	return
         
 class DownloadTSEBot(ThreadingDownloadBot):
     def __init__(self,pid,queue):
@@ -236,10 +237,6 @@ if __name__ == '__main__':
     #    t.setDaemon(True)
     #    t.start()
     TSEqueue = Queue.Queue()
-
-    for Code in CodeDict['TSE']:
-        TSEqueue.put(Code)
-
     for i in range(1):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
@@ -248,13 +245,14 @@ if __name__ == '__main__':
     #for Code in CodeDict['OTC']:
     #    OTCqueue.put(Code)         
 
+    for Code in CodeDict['TSE']:
+        TSEqueue.put(Code)
+
+
     #OTCqueue.join()
     TSEqueue.join()
     
     tEndTSE = time()
 
     print 'End...Total(%f)'%(tEndTSE-tStart)
-
-    
-
 
