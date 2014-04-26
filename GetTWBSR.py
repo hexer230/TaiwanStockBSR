@@ -87,8 +87,10 @@ class DownloadTSEBot(ThreadingDownloadBot):
             except Exception,e:
 		print e
                 #print dir(e)
-		if e.errno == 104 :
+		if e.errno == 104 : #reset by peer
+		   print "push %d again" %(Code)
                    TSEqueue.put(Code)
+		   print TSEqueue
                 return (None,None)
         
         # step 2. GetRawData
