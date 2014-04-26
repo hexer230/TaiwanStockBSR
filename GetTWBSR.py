@@ -25,6 +25,7 @@ class ThreadingDownloadBot(threading.Thread):
         self.queue = queue
         self.pid = pid  
     def run(self):
+        print "QUEUE START..pid:%d" %(self.pid)
         while(True):
             Code = self.queue.get()
             retry = 0
@@ -41,11 +42,11 @@ class ThreadingDownloadBot(threading.Thread):
                 else:
                     retryCode = Code+str(retry)
                     self.queue.put(retryCode)
-                    print '********fail*******'
+                    print '********fail******* %d' %(self.pid)
                     sleep( 1 ) #有錯誤停1秒
             else:
                 print '\t(%d)Write %s Finish...'%(self.pid,Code)
-            
+            print "QUEUE END..pid:%d" %(self.pid)
             self.queue.task_done()
         
 class DownloadTSEBot(ThreadingDownloadBot):
@@ -227,11 +228,11 @@ if __name__ == '__main__':
     print 'TSE:%d OTC:%d'%(len(CodeDict['TSE']),len(CodeDict['OTC']))
     tStart = time()
 
-    OTCqueue = Queue.Queue() 
-    for i in range(20):
-        t = DownloadOTCBot(i,OTCqueue)
-        t.setDaemon(True)
-        t.start()
+    #OTCqueue = Queue.Queue() 
+    #for i in range(20):
+    #    t = DownloadOTCBot(i,OTCqueue)
+    #    t.setDaemon(True)
+    #    t.start()
     
     TSEqueue = Queue.Queue()
     for i in range(3):
@@ -239,14 +240,14 @@ if __name__ == '__main__':
         t.setDaemon(True)
         t.start()        
 
-    for Code in CodeDict['OTC']:
-        OTCqueue.put(Code)
+    #for Code in CodeDict['OTC']:
+    #    OTCqueue.put(Code)
         
     for Code in CodeDict['TSE']:
         TSEqueue.put(Code)
     
 
-    OTCqueue.join()
+    #OTCqueue.join()
     TSEqueue.join()
     
     tEndTSE = time()
