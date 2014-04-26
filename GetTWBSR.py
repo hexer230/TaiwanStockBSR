@@ -18,6 +18,9 @@ from types import *
 # OTC : Over-the-Counter , 櫃檯中心 （上櫃）
 # BSR : Buy Sell Report , 分公司買賣進出表
 
+global ERR_RESET_PEER
+
+ERR_RESET_PEER = 104
 
 class ThreadingDownloadBot(threading.Thread):
     def __init__(self,pid,queue):
@@ -37,15 +40,20 @@ class ThreadingDownloadBot(threading.Thread):
 	    while retry < 3 :
 		print '[%d]Process:[%s] Left:%d retry:%d'%(self.pid,Code,self.queue.qsize(),retry)
 		sleep( 1 ) #[]== don't hurry up
-		ret = self.RunImp(Code)
+		ret = self.RunImp(Code)		
 		if ret == None: #lol, what the hell?
 		    retry +=1	
 		    retryCode = Code+str(retry)
 		    print '********fail******* %d' %(self.pid)
 		    sleep( 1 ) #[]== sleep 1 sec.
+		elif ret == 104 :
+		    print "Got a reset error, sleep 5 secs then put back"
+		    sleep( 5 ) #[]== you should sleep here.
+		    self.queue.put(Code)
+		    break
 		else:
 		    print '\t(%d)Write %s Finish...'%(self.pid,Code)	
-		    break	
+		    break		  
 	    #print "task_done! step 1 %d" % (self.queue.qsize())
 	    self.queue.task_done()
 	    #print "task_done! step 2 %d" % (self.queue.qsize())	   
@@ -88,10 +96,9 @@ class DownloadTSEBot(ThreadingDownloadBot):
 		print e
                 #print dir(e)
 		if e.errno == 104 : #reset by peer
-		   print "push %s again" %(Code)
-                   TSEqueue.put(Code)
-		   print TSEqueue
-                return (None,None)
+		   return ("ERR","104")
+	        else :
+                   return (None,None)
         
         # step 2. GetRawData
         def GetBSRawData(Code,MaxPageNum):
@@ -154,6 +161,8 @@ class DownloadTSEBot(ThreadingDownloadBot):
 
         self.RawBSR = "TSE"
         self.date,MaxPageNum = GetDateAndspPage(Code)
+	if self.date == "ERR" :
+	    return MaxPageNum #what a fool name, I should fix the whole architecture
         print Code , self.date , MaxPageNum
         if None == MaxPageNum or "" == MaxPageNum:
             return None
@@ -252,7 +261,7 @@ if __name__ == '__main__':
     for Code in CodeDict['TSE']:
         TSEqueue.put(Code)
 
-    for i in range(100):
+    for i in range(50):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
         t.start()
