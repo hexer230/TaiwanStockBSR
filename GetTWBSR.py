@@ -88,7 +88,7 @@ class DownloadTSEBot(ThreadingDownloadBot):
 		print e
                 #print dir(e)
 		if e.errno == 104 : #reset by peer
-		   print "push %d again" %(Code)
+		   print "push %s again" %(Code)
                    TSEqueue.put(Code)
 		   print TSEqueue
                 return (None,None)
