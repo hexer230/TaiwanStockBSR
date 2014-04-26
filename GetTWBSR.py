@@ -30,9 +30,8 @@ class ThreadingDownloadBot(threading.Thread):
 	if len(Code) >= 5:
 	    retry = int(Code[4])
 	    Code = Code[0:4]
-	print '[%d]Process:[%s] Left:%d retry:%d'%(self.pid,Code,self.queue.qsize(),retry)
 	while retry < 3 :
-	    print "chk AAA"
+	    print '[%d]Process:[%s] Left:%d retry:%d'%(self.pid,Code,self.queue.qsize(),retry)
 	    ret = self.RunImp(Code)
 	    if None == ret:
 		retry +=1	
@@ -41,8 +40,9 @@ class ThreadingDownloadBot(threading.Thread):
 		sleep( 1 ) #[]== sleep 1 sec.
 	    else:
 		print '\t(%d)Write %s Finish...'%(self.pid,Code)	
-		break
+		break	
 	self.queue.task_done()
+	print "task_done! %d" % (self.queue.qsize())
         
 class DownloadTSEBot(ThreadingDownloadBot):
     def __init__(self,pid,queue):
@@ -230,7 +230,7 @@ if __name__ == '__main__':
     #    t.start()
     
     TSEqueue = Queue.Queue()
-    for i in range(1):
+    for i in range(2):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
         t.start()        
