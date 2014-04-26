@@ -41,8 +41,9 @@ class ThreadingDownloadBot(threading.Thread):
 	    else:
 		print '\t(%d)Write %s Finish...'%(self.pid,Code)	
 		break	
+	print "task_done! step 1 %d" % (self.queue.qsize())
 	self.queue.task_done()
-	print "task_done! %d" % (self.queue.qsize())
+	print "task_done! step 2 %d" % (self.queue.qsize())
         
 class DownloadTSEBot(ThreadingDownloadBot):
     def __init__(self,pid,queue):
@@ -186,13 +187,16 @@ class DownloadOTCBot(ThreadingDownloadBot):
                 return date
             return None
         
+	print "CHK A"
         self.RawBSR = "OTC"
         otcDate = getOTCDate(Code)
+	print "CHK B"
         if otcDate == None:
             return None
-        
+        print "CHK C"
         filename = "%s_%d%s.csv"%(Code,int(otcDate[0:3])+1911,otcDate[3:]) 
         ret = DownloadOTC(Code,filename,otcDate)
+        print "CHK D"
         if None == ret:
             return None
         return True
@@ -230,7 +234,7 @@ if __name__ == '__main__':
     #    t.start()
     
     TSEqueue = Queue.Queue()
-    for i in range(2):
+    for i in range(1):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
         t.start()        
