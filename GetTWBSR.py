@@ -24,30 +24,24 @@ class ThreadingDownloadBot(threading.Thread):
         threading.Thread.__init__(self)
         self.queue = queue
         self.pid = pid  
-    def run(self):
-        print "QUEUE START..pid:%d" %(self.pid)
-        while(True):
-            Code = self.queue.get()
-            retry = 0
-            if len(Code) >= 5:
-                retry = int(Code[4])
-                Code = Code[0:4]
-        
-            print '[%d]Process:[%s] Left:%d retry:%d'%(self.pid,Code,self.queue.qsize(),retry)
-            ret = self.RunImp(Code)
-            if None == ret:
-                retry +=1
-                if retry > 3:
-                    print '%s 下載三次失敗'%(Code)
-                else:
-                    retryCode = Code+str(retry)
-                    self.queue.put(retryCode)
-                    print '********fail******* %d' %(self.pid)
-                    sleep( 1 ) #有錯誤停1秒
-            else:
-                print '\t(%d)Write %s Finish...'%(self.pid,Code)
-            print "QUEUE END..pid:%d" %(self.pid)
-            self.queue.task_done()
+    def run(self):                
+	Code = self.queue.get()
+	retry = 0
+	if len(Code) >= 5:
+	    retry = int(Code[4])
+	    Code = Code[0:4]
+	print '[%d]Process:[%s] Left:%d retry:%d'%(self.pid,Code,self.queue.qsize(),retry)
+	while ret < 3 :
+	    ret = self.RunImp(Code)
+	    if None == ret:
+		retry +=1	
+		retryCode = Code+str(retry)
+		print '********fail******* %d' %(self.pid)
+		sleep( 1 ) #[]== sleep 1 sec.
+	    else:
+		print '\t(%d)Write %s Finish...'%(self.pid,Code)	
+		break
+	self.queue.task_done()
         
 class DownloadTSEBot(ThreadingDownloadBot):
     def __init__(self,pid,queue):
