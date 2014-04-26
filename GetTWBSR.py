@@ -237,7 +237,7 @@ if __name__ == '__main__':
     for Code in CodeDict['TSE']:
         TSEqueue.put(Code)
 
-    for i in range(10):
+    for i in range(50):
         t = DownloadTSEBot(i,TSEqueue)
         t.setDaemon(True)
         t.start()        
