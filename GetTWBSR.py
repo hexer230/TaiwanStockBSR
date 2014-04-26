@@ -21,10 +21,12 @@ from types import *
 global ERR_RESET_PEER
 global RESETPEER_CNT, TIMEOUT_CNT
 global strikeOutAry
+global giveupAry
 RESETPEER_CNT = 0
 TIMEOUT_CNT = 0
 ERR_RESET_PEER = 104
 strikeOutAry = []
+giveupAry = []
 
 class ThreadingDownloadBot(threading.Thread):
     def __init__(self,pid,queue):
@@ -55,6 +57,7 @@ class ThreadingDownloadBot(threading.Thread):
 			for e in strikeOutAry:
 			    if e == Code :
 				print "found strikeOutAlready, give up currently"				
+				giveupAry.append(Code)
 				iFound = True
 			        break
 			if iFound == False :
@@ -311,4 +314,12 @@ if __name__ == '__main__':
     print 'End...Total(%f)'%(tEndTSE-tStart)
     print "Reset peer count (%d)" %(RESETPEER_CNT)
     print "Time out count (%d)" %(TIMEOUT_CNT)    
+    print "strikeOutAry is:"
+    for aEntry in strikeOutAry:
+	print aEntry
+    print "================"
+    print "giveupAry is:"
+    for aEntry in giveupAry:
+	print aEntry
 
+    print "[]== Have A Nice Day"
