@@ -27,7 +27,7 @@ class ThreadingDownloadBot(threading.Thread):
     def run(self):                
 	while(True):
 	    if self.queue.qsize()==0 :
-		print "all job is done"
+		print "[PID:%d]all job is done"%(self.pid)
 		break
 	    Code = self.queue.get()
 	    retry = 0
