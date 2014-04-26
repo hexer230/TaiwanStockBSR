@@ -19,10 +19,11 @@ from types import *
 # BSR : Buy Sell Report , 分公司買賣進出表
 
 global ERR_RESET_PEER
-global RESETPEER_CNT, TIMEOUT_CNT
+global RESETPEER_CNT, TIMEOUT_CNT, THREE_STRIKE_CNT
 
 RESETPEER_CNT = 0
 TIMEOUT_CNT = 0
+THREE_STRIKE_CNT = 0
 ERR_RESET_PEER = 104
 
 class ThreadingDownloadBot(threading.Thread):
@@ -45,7 +46,14 @@ class ThreadingDownloadBot(threading.Thread):
 		sleep( 1 ) #[]== don't hurry up
 		ret = self.RunImp(Code)		
 		if ret == None: #lol, what the hell?
+		    global THREE_STRIKE_CNT
+		    THREE_STRIKE_CNT += 1		    
 		    retry +=1	
+		    if retry == 3 :
+			print "Got a , sleep 5 secs then put back"
+			sleep( 5 ) #[]== you should sleep here.
+			self.queue.put(Code)
+			break
 		    retryCode = Code+str(retry)
 		    print '********fail******* %d' %(self.pid)
 		    sleep( 1 ) #[]== sleep 1 sec.
@@ -294,6 +302,7 @@ if __name__ == '__main__':
     tEndTSE = time()
 
     print 'End...Total(%f)'%(tEndTSE-tStart)
-    print "Reset peer count (%d)" %(RESSETPEER_CNT)
+    print "Reset peer count (%d)" %(RESETPEER_CNT)
     print "Time out count (%d)" %(TIMEOUT_CNT)
+    print "THREE STRIKE count (%d)" %(THREE_STRIKE_CNT)
 
