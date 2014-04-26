@@ -132,18 +132,25 @@ class DownloadTSEBot(ThreadingDownloadBot):
             with open('BSR/'+filename, 'wb') as csvfile:
                 content = '\n'.join(row for row in CSVData)
                 csvfile.write(content)
-                
+        print "CHK A"
         self.RawBSR = "TSE"
         self.date,MaxPageNum = GetDateAndspPage(Code)
+        print "CHK B"
         print Code , self.date , MaxPageNum
         if None == MaxPageNum or "" == MaxPageNum:
             return None
+        print "CHK C"
         BSRawData = GetBSRawData(Code, MaxPageNum)
+        print "CHK D"
         if None == BSRawData:
-            return None
+            return Nonea
+        print "CHK E"
         filename = "%s_%s.csv"%(Code,self.date) 
+        print "CHK F"
         CSVData = BSRawToCSV(BSRawData)
+        print "CHK G"
         CSVToFile(CSVData, filename)
+        print "CHK H"
         return True
       
 class DownloadOTCBot(ThreadingDownloadBot):
@@ -186,17 +193,13 @@ class DownloadOTCBot(ThreadingDownloadBot):
             for date in date_list:
                 return date
             return None
-        
-	print "CHK A"
+        	
         self.RawBSR = "OTC"
-        otcDate = getOTCDate(Code)
-	print "CHK B"
+        otcDate = getOTCDate(Code)	
         if otcDate == None:
             return None
-        print "CHK C"
         filename = "%s_%d%s.csv"%(Code,int(otcDate[0:3])+1911,otcDate[3:]) 
         ret = DownloadOTC(Code,filename,otcDate)
-        print "CHK D"
         if None == ret:
             return None
         return True
